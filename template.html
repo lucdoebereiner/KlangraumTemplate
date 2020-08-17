@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+    <head>
+	<title>Klangraum Template</title>
+	<meta charset="utf-8" />
+	<script src='./libs/lame.all.js'></script> <!-- Mp3 encoding library -->
+    </head>
+    <body>
+	<h1>Klangraum Template</h1>
+	<audio></audio>  <!-- This audio object is needed for input -->
+	<button type="button" id="play-button">Play</button> <!-- The functions for this button are assigned in wsplayer.js -->
+
+
+    </body>
+    
+    <script type="module">
+     import { klangraumConnect } from './libs/klangraum_client.js'; /* Output audio connections */
+     import { ws2osc } from './libs/ws2osc_client.js'; /* Osc communication */
+     import { audioInputConnection } from './libs/wsplayer.js'; /* Input audio connection */
+
+     let server = "localhost"; // For local testing, the remote server is static.184.12.47.78.clients.your-server.de
+     let jackInputChannel = 0; // The input will be stereo. If you have several output stream you can select the stream here
+
+     
+     //     let urls = "wss://
+     let klangraumUrl = 'ws://' + server + ':8800';
+     let ws2oscUrl = 'ws://' + server + ':8081';
+     let id; // Will the unique id of this client
+     let channel; // Will be in the mic (output) channel
+
+     // This starts the output ws connection and gets the id and mic channel from the server.
+     let klangraumSocket = klangraumConnect(klangraumUrl, function(event) {
+	 let msg = JSON.parse(event.data);
+	 id = msg.id;
+	 channel = msg.channel;
+	 // Start the bidirectional ws2osc connection, the last argument is a callback function for uncoming messages
+	 // The function returns the ws connection, so you can assign it to a variable and use it for messaging to the server
+	 ws2osc(ws2oscUrl, id, channel, (d) => 	console.log(d));
+     });
+
+     audioInputConnection(server, jackInputChannel, false);
+     
+    </script>
+    
+</html>
