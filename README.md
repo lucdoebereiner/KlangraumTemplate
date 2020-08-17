@@ -15,13 +15,13 @@ This template can be used for local testing.
 
 ## Start
 
-Start the three servers (see their README files). Start KlagnSendWS
+Start the three servers (see their README files). Start KlangSendWS
 without the http-server (see README).
 
 ```bash
 $ ./serve.sh
 ```
-Open the http://localhost:9000/template.html in Chrome or Safari
+Open http://localhost:9000/template.html in Chrome or Safari
 (Firefox is currently not supported).
 
 
