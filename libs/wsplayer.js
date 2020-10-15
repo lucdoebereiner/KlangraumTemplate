@@ -1,4 +1,24 @@
-export function audioInputConnection(server, jackChannel, debugMode) {
+
+function getBrowserId () {
+    var aKeys = ["MSIE", "Firefox", "Safari", "Chrome", "Opera"],
+        sUsrAg = navigator.userAgent,
+        nIdx = aKeys.length - 1;
+    
+    for (nIdx; nIdx > -1 && sUsrAg.indexOf(aKeys[nIdx]) === -1; nIdx--);
+
+    return nIdx;
+}
+
+function canUseWSConnection() {
+    var browserSupported = getBrowserID > 1;
+    var MSESupported = (window.MediaSource) ? true : false;
+    var isIPhone = navigator.platform == "iPhone";
+
+    return (browserSupported && MSESupported && !isIPhone);
+}
+
+
+function audioWSInputConnection(server, jackChannel, debugMode) {
     
     var mediaSource = new MediaSource();
     var buffer;
@@ -73,7 +93,7 @@ export function audioInputConnection(server, jackChannel, debugMode) {
     }, false);
 
 
-    let websocket = new WebSocket("ws://" + server + ":3012");
+    let websocket = new WebSocket("wss://" + server + ":3012");
     websocket.binaryType = 'arraybuffer';
     websocket.onopen = function (event) {
 
@@ -90,9 +110,38 @@ export function audioInputConnection(server, jackChannel, debugMode) {
 	}, false);
 	
     };
-    
-    
 
 };
 
 
+export function playAudio(server, jackChannel, debugMode) {
+    if (canUseWSConnection()) {
+	audioWSInputConnection(server, jackChannel, debugMode);
+    } else {
+	const audio = document.querySelector('audio');
+	audio.src = "https://" + server + ":8443/listen.mp3";
+
+	const playButton = document.getElementById('play-button');
+	playButton.onclick = () => playPause();
+
+	var playing = false;
+	
+	function playPause() {
+	    if (playing) {
+		playing = false;
+		playButton.innerText = "Play";
+		audio.pause();
+	    } else {
+		playing = true;
+		playButton.innerText = "Buffering";
+		playButton.disabled = true;
+		audio.play();
+		setTimeout(() => {
+		    playButton.innerText = "Pause";
+		    playButton.disabled = false;
+		}, 500);
+	    }
+	}
+
+    }
+}

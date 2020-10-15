@@ -16,7 +16,7 @@
     <script type="module">
      import { klangraumConnect } from './libs/klangraum_client.js'; /* Output audio connections */
      import { ws2osc } from './libs/ws2osc_client.js'; /* Osc communication */
-     import { audioInputConnection } from './libs/wsplayer.js'; /* Input audio connection */
+     import { playAudio } from './libs/wsplayer.js'; /* Input audio connection */
 
      let server = "localhost"; // For local testing, the remote server is static.184.12.47.78.clients.your-server.de
      let jackInputChannel = 0; // The input will be stereo. If you have several output stream you can select the stream here
@@ -37,7 +37,7 @@
 	 ws2osc(ws2oscUrl, id, channel, (d) => 	console.log(d));
      });
 
-     audioInputConnection(server, jackInputChannel, false);
+     playAudio(server, jackInputChannel, false);
      
     </script>
     
