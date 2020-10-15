@@ -10,7 +10,7 @@ function getBrowserId () {
 }
 
 function canUseWSConnection() {
-    var browserSupported = getBrowserID > 1;
+    var browserSupported = getBrowserId() > 1;
     var MSESupported = (window.MediaSource) ? true : false;
     var isIPhone = navigator.platform == "iPhone";
 
